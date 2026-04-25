@@ -109,13 +109,9 @@ export default function App() {
 
     const nextPhase = phaseComplete.nextPhase;
 
-    // Primero cerramos el modal negro
+    // Cambiamos primero la fase para que no quede un hueco entre pantallas.
+    setState((current) => ({ ...current, phase: nextPhase }));
     setPhaseComplete(null);
-
-    // Luego cambiamos la fase, dejando que AnimatePresence desmonte bien la capa anterior
-    window.setTimeout(() => {
-      setState((current) => ({ ...current, phase: nextPhase }));
-    }, 220);
   }
 
   function resetAll() {
@@ -184,7 +180,7 @@ export default function App() {
           <PhaseRail phase={state.phase} tokens={state.tokens} />
         </div>
 
-        <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence mode="sync" initial={false}>
           <motion.div
             key={`${activePhase.id}-${state.phase}`}
             initial={{ opacity: 0, y: 18 }}
@@ -192,11 +188,13 @@ export default function App() {
             exit={{ opacity: 0, y: -18 }}
             transition={{ duration: 0.35, ease: 'easeOut' }}
           >
-            {activePhase.id === 'chess' && <ChessPhase {...phaseProps} />}
-            {activePhase.id === 'stable' && <StablePhase {...phaseProps} />}
-            {activePhase.id === 'document' && <DocumentPhase {...phaseProps} />}
-            {activePhase.id === 'route' && <RoutePhase {...phaseProps} />}
-            {activePhase.id === 'terminal' && <TerminalPhase {...phaseProps} />}
+            <div className="min-h-[72vh]">
+              {activePhase.id === 'chess' && <ChessPhase {...phaseProps} />}
+              {activePhase.id === 'stable' && <StablePhase {...phaseProps} />}
+              {activePhase.id === 'document' && <DocumentPhase {...phaseProps} />}
+              {activePhase.id === 'route' && <RoutePhase {...phaseProps} />}
+              {activePhase.id === 'terminal' && <TerminalPhase {...phaseProps} />}
+            </div>
           </motion.div>
         </AnimatePresence>
       </section>

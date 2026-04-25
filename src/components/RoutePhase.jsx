@@ -96,12 +96,15 @@ export default function RoutePhase({
 
   return (
     <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
-      <section className="mission-panel">
+      <section className="mission-panel bg-[#18130f]">
         <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="kicker">Objetivo</p>
             <p className="mt-1 text-sm text-champagne">
               Certifica el orden operativo antes de abrir la terminal.
+            </p>
+            <p className="mt-2 max-w-xl text-sm text-smoke">
+              La mesa ya está montada. Solo importa la secuencia correcta de expedientes.
             </p>
 
             <div className="mt-3 flex items-center gap-3">
@@ -153,7 +156,7 @@ export default function RoutePhase({
                 return (
                   <div
                     key={slot}
-                    className="rounded-[24px] border border-brass/20 bg-black/20 p-3"
+                    className="rounded-[24px] border border-brass/20 bg-white/[0.04] p-3"
                   >
                     <div className="mb-3 flex items-center justify-between gap-2">
                       <p className="text-[11px] uppercase tracking-[0.22em] text-brass">
