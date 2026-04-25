@@ -42,15 +42,18 @@ export default function App() {
         setTyped('');
       }
     };
+
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [typed]);
 
   const activePhase = phases[state.phase] ?? phases[0];
+
   const completedCount = useMemo(
     () => Object.values(state.tokens).filter(Boolean).length,
-    [state.tokens],
+    [state.tokens]
   );
+
   const hintTotal = Object.values(state.hints).reduce((total, count) => total + count, 0);
   const helpTotal = Object.values(state.helps).reduce((total, count) => total + count, 0);
 
@@ -69,10 +72,18 @@ export default function App() {
     setState((current) => ({
       ...current,
       tokens: { ...current.tokens, [key]: token },
-      evidence: evidenceKey ? { ...current.evidence, [evidenceKey]: true } : current.evidence,
+      evidence: evidenceKey
+        ? { ...current.evidence, [evidenceKey]: true }
+        : current.evidence,
     }));
+
     if (key !== 'final') {
-      setPhaseComplete({ key, token, nextPhase: Math.min(nextPhase, phases.length - 1), evidenceKey });
+      setPhaseComplete({
+        key,
+        token,
+        nextPhase: Math.min(nextPhase, phases.length - 1),
+        evidenceKey,
+      });
     }
   }
 
@@ -81,7 +92,10 @@ export default function App() {
       ...current,
       [kind === 'help' ? 'helps' : 'hints']: {
         ...current[kind === 'help' ? 'helps' : 'hints'],
-        [id]: Math.min((current[kind === 'help' ? 'helps' : 'hints'][id] ?? 0) + 1, kind === 'help' ? 2 : 3),
+        [id]: Math.min(
+          (current[kind === 'help' ? 'helps' : 'hints'][id] ?? 0) + 1,
+          kind === 'help' ? 2 : 3
+        ),
       },
       assistanceLog: [
         ...current.assistanceLog,
@@ -92,8 +106,16 @@ export default function App() {
 
   function continueAfterSuccess() {
     if (!phaseComplete) return;
-    setState((current) => ({ ...current, phase: phaseComplete.nextPhase }));
+
+    const nextPhase = phaseComplete.nextPhase;
+
+    // Primero cerramos el modal negro
     setPhaseComplete(null);
+
+    // Luego cambiamos la fase, dejando que AnimatePresence desmonte bien la capa anterior
+    window.setTimeout(() => {
+      setState((current) => ({ ...current, phase: nextPhase }));
+    }, 220);
   }
 
   function resetAll() {
@@ -101,6 +123,9 @@ export default function App() {
     localStorage.removeItem('archivo-privado-state-v2');
     localStorage.removeItem('archivo-privado-state-v1');
     setState(initialState);
+    setPhaseComplete(null);
+    setHostOpen(false);
+    setTyped('');
   }
 
   const phaseProps = {
@@ -120,6 +145,7 @@ export default function App() {
 
       <header className="sticky top-0 z-30 mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3 backdrop-blur-md sm:px-6">
         <button
+          type="button"
           className="group flex items-center gap-3 text-left"
           aria-label="Marca privada"
           onDoubleClick={() => setHostOpen(true)}
@@ -132,21 +158,25 @@ export default function App() {
               Archivo
             </span>
             <span className="block text-[11px] uppercase tracking-[0.24em] text-smoke">
-              Operacion privada
+              Operación privada
             </span>
           </span>
         </button>
 
         <div className="flex items-center gap-2 rounded-full border border-white/10 bg-[#11100e]/80 px-3 py-2 text-xs text-smoke">
           <Shield className="h-4 w-4 text-brass" />
-          <span>{completedCount}/5 sellos · P{hintTotal} A{helpTotal}</span>
+          <span>
+            {completedCount}/5 sellos · P{hintTotal} A{helpTotal}
+          </span>
         </div>
       </header>
 
       <section className="mx-auto w-full max-w-6xl px-4 pb-6 sm:px-6">
         <div className="mb-5 grid gap-3 sm:flex sm:items-center sm:justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.26em] text-brass">{activePhase.eyebrow}</p>
+            <p className="text-xs uppercase tracking-[0.26em] text-brass">
+              {activePhase.eyebrow}
+            </p>
             <h1 className="mt-1 font-display text-3xl leading-tight text-champagne sm:text-5xl">
               {activePhase.title}
             </h1>
@@ -154,9 +184,9 @@ export default function App() {
           <PhaseRail phase={state.phase} tokens={state.tokens} />
         </div>
 
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div
-            key={activePhase.id}
+            key={`${activePhase.id}-${state.phase}`}
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -18 }}
@@ -172,20 +202,23 @@ export default function App() {
       </section>
 
       <button
+        type="button"
         className="fixed bottom-2 right-2 h-8 w-8 opacity-0"
         aria-label="Panel reservado"
         onClick={() => setHostOpen(true)}
       />
 
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {phaseComplete && (
           <SuccessModal
+            key={`success-${phaseComplete.key}-${phaseComplete.token}`}
             phase={activePhase}
             token={phaseComplete.token}
             evidenceKey={phaseComplete.evidenceKey}
             onContinue={continueAfterSuccess}
           />
         )}
+
         {hostOpen && (
           <HostPanel
             state={state}
@@ -220,16 +253,25 @@ function SuccessModal({ phase, token, evidenceKey, onContinue }) {
         animate={{ y: 0, scale: 1 }}
         exit={{ y: 18, scale: 0.96 }}
       >
-        <p className="text-xs uppercase tracking-[0.28em] text-brass">{phase.eyebrow} cerrada</p>
+        <p className="text-xs uppercase tracking-[0.28em] text-brass">
+          {phase.eyebrow} cerrada
+        </p>
+
         <div className="mx-auto mt-4 grid h-16 w-16 place-items-center border border-brass/30 bg-brass/10 text-brass">
           <BadgeCheck className="h-8 w-8" />
         </div>
-        <h2 className="mt-4 font-display text-4xl text-champagne">Token recuperado</h2>
+
+        <h2 className="mt-4 font-display text-4xl text-champagne">
+          Token recuperado
+        </h2>
+
         <p className="mt-2 font-mono text-2xl text-brass">{token}</p>
+
         <p className="mx-auto mt-4 max-w-sm text-sm text-smoke">
           {evidenceCopy[evidenceKey] ?? 'El expediente queda actualizado.'}
         </p>
-        <button className="btn-primary mt-6 w-full" onClick={onContinue}>
+
+        <button type="button" className="btn-primary mt-6 w-full" onClick={onContinue}>
           Continuar
         </button>
       </motion.div>
@@ -238,7 +280,13 @@ function SuccessModal({ phase, token, evidenceKey, onContinue }) {
 }
 
 function PhaseRail({ phase, tokens }) {
-  const tokenList = [tokens.noah, tokens.cuadra, tokens.laculataii, tokens.traza, tokens.final];
+  const tokenList = [
+    tokens.noah,
+    tokens.cuadra,
+    tokens.laculataii,
+    tokens.traza,
+    tokens.final,
+  ];
 
   return (
     <div className="flex items-center gap-2">
@@ -249,8 +297,8 @@ function PhaseRail({ phase, tokens }) {
             index === phase
               ? 'border-brass bg-brass'
               : tokenList[index]
-                ? 'border-pine bg-pine'
-                : 'border-white/15 bg-white/5'
+              ? 'border-pine bg-pine'
+              : 'border-white/15 bg-white/5'
           }`}
         />
       ))}
@@ -264,7 +312,11 @@ function HostPanel({ state, setState, resetAll, close }) {
     ['Fase II', 'CUADRA', 'Orden: herradura, cubo, placa, manta, cierre, viga'],
     ['Fase III', 'LACULATAII', 'Piezas por filas: p1 p2 p3 / p4 p5 p6 / p7 p8 p9'],
     ['Fase IV', 'TRAZA', 'Orden correcto: anclajes, observadores, sello, copia anulada'],
-    ['Fase V', FINAL_KEY, 'revisar cuadra; revisar tablero; revisar archivo; revisar traza; matriz; abrir <clave>'],
+    [
+      'Fase V',
+      FINAL_KEY,
+      'revisar cuadra; revisar tablero; revisar archivo; revisar traza; matriz; abrir <clave>',
+    ],
   ];
 
   function grantAll() {
@@ -285,10 +337,14 @@ function HostPanel({ state, setState, resetAll, close }) {
   function grantAssistance(kind) {
     const active = phases[state.phase]?.id ?? 'chess';
     const key = kind === 'help' ? 'helps' : 'hints';
+
     setState((current) => ({
       ...current,
       [key]: { ...current[key], [active]: (current[key][active] ?? 0) + 1 },
-      assistanceLog: [...current.assistanceLog, { id: active, kind, at: new Date().toISOString(), host: true }],
+      assistanceLog: [
+        ...current.assistanceLog,
+        { id: active, kind, at: new Date().toISOString(), host: true },
+      ],
     }));
   }
 
@@ -314,39 +370,65 @@ function HostPanel({ state, setState, resetAll, close }) {
       >
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-brass">Modo host</p>
-            <h2 className="mt-1 font-display text-3xl">Control de mision</h2>
+            <p className="text-xs uppercase tracking-[0.24em] text-brass">
+              Modo host
+            </p>
+            <h2 className="mt-1 font-display text-3xl">Control de misión</h2>
           </div>
-          <button className="btn-ghost" onClick={close}>
+
+          <button type="button" className="btn-ghost" onClick={close}>
             Cerrar
           </button>
         </div>
 
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           <button
+            type="button"
             className="btn-primary"
-            onClick={() => setState((current) => ({ ...current, phase: Math.max(0, current.phase - 1) }))}
+            onClick={() =>
+              setState((current) => ({
+                ...current,
+                phase: Math.max(0, current.phase - 1),
+              }))
+            }
           >
             <ChevronLeft className="h-4 w-4" /> Fase anterior
           </button>
+
           <button
+            type="button"
             className="btn-primary"
             onClick={() =>
-              setState((current) => ({ ...current, phase: Math.min(phases.length - 1, current.phase + 1) }))
+              setState((current) => ({
+                ...current,
+                phase: Math.min(phases.length - 1, current.phase + 1),
+              }))
             }
           >
             Fase siguiente <ChevronRight className="h-4 w-4" />
           </button>
-          <button className="btn-secondary" onClick={grantAll}>
+
+          <button type="button" className="btn-secondary" onClick={grantAll}>
             <KeyRound className="h-4 w-4" /> Conceder tokens
           </button>
-          <button className="btn-secondary" onClick={() => grantAssistance('hint')}>
+
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={() => grantAssistance('hint')}
+          >
             <FileText className="h-4 w-4" /> Activar pista
           </button>
-          <button className="btn-secondary" onClick={() => grantAssistance('help')}>
+
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={() => grantAssistance('help')}
+          >
             <LifeBuoy className="h-4 w-4" /> Desbloquear ayuda
           </button>
-          <button className="btn-danger" onClick={resetAll}>
+
+          <button type="button" className="btn-danger" onClick={resetAll}>
             <RotateCcw className="h-4 w-4" /> Resetear
           </button>
         </div>
@@ -354,8 +436,12 @@ function HostPanel({ state, setState, resetAll, close }) {
         <div className="mt-5 grid gap-3 sm:grid-cols-3">
           {Object.entries(state.evidence).map(([key, value]) => (
             <div key={key} className="border border-white/10 bg-white/[0.04] p-3">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-brass">{key}</p>
-              <p className="mt-1 text-sm text-smoke">{value ? 'archivada' : 'pendiente'}</p>
+              <p className="text-[11px] uppercase tracking-[0.18em] text-brass">
+                {key}
+              </p>
+              <p className="mt-1 text-sm text-smoke">
+                {value ? 'archivada' : 'pendiente'}
+              </p>
             </div>
           ))}
         </div>
@@ -366,7 +452,10 @@ function HostPanel({ state, setState, resetAll, close }) {
             ['origin', 'Origen'],
             ['travelDate', 'Fecha'],
           ].map(([key, label]) => (
-            <label key={key} className="text-xs uppercase tracking-[0.18em] text-brass">
+            <label
+              key={key}
+              className="text-xs uppercase tracking-[0.18em] text-brass"
+            >
               {label}
               <input
                 className="mt-2 w-full border border-white/10 bg-black/30 px-3 py-2 text-sm normal-case tracking-normal text-champagne outline-none"
