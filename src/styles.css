@@ -83,20 +83,20 @@
 
 .stable-scene {
   background:
-    radial-gradient(circle at center, rgba(216, 179, 106, 0.08), transparent 62%),
-    #070706;
+    radial-gradient(circle at center, rgba(216, 179, 106, 0.14), transparent 62%),
+    #0e0d0b;
   cursor: crosshair;
   min-height: min(68vh, 620px);
 }
 
 .stable-darkness {
   background:
-    radial-gradient(circle at var(--lx) var(--ly), transparent 0 116px, rgba(0, 0, 0, 0.28) 172px, rgba(0, 0, 0, 0.72) 310px),
-    linear-gradient(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.22));
+    radial-gradient(circle at var(--lx) var(--ly), transparent 0 150px, rgba(0, 0, 0, 0.14) 230px, rgba(0, 0, 0, 0.5) 360px),
+    linear-gradient(rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.12));
 }
 
 .stable-beam {
-  background: radial-gradient(circle at var(--lx) var(--ly), rgba(241, 226, 191, 0.34), transparent 158px);
+  background: radial-gradient(circle at var(--lx) var(--ly), rgba(241, 226, 191, 0.52), transparent 190px);
   mix-blend-mode: screen;
 }
 
