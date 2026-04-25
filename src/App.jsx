@@ -99,7 +99,7 @@ export default function App() {
   function resetAll() {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem('archivo-privado-state-v2');
-    localStorage.removeItem('escape-room-madrid-state-v1');
+    localStorage.removeItem('archivo-privado-state-v1');
     setState(initialState);
   }
 

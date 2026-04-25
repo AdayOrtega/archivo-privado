@@ -1,5 +1,5 @@
 export const STORAGE_KEY = 'archivo-privado-state-v3';
-const LEGACY_KEYS = ['archivo-privado-state-v2', 'escape-room-madrid-state-v1'];
+const LEGACY_KEYS = ['archivo-privado-state-v2', 'archivo-privado-state-v1'];
 
 export const initialState = {
   phase: 0,
