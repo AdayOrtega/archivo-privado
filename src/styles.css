@@ -1,0 +1,205 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background: #080807;
+    font-family: theme('fontFamily.body');
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger,
+  .btn-ghost {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 border px-3 py-2 text-sm font-semibold transition duration-200 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .btn-primary {
+    @apply border-brass/40 bg-brass/15 text-champagne hover:bg-brass/25;
+  }
+
+  .btn-secondary {
+    @apply border-pine/70 bg-pine/40 text-champagne hover:bg-pine/60;
+  }
+
+  .btn-danger {
+    @apply border-ember/70 bg-ember/20 text-champagne hover:bg-ember/30;
+  }
+
+  .btn-ghost {
+    @apply border-white/10 bg-white/[0.04] text-smoke hover:border-brass/30 hover:text-champagne;
+  }
+
+  .mission-panel {
+    @apply border border-brass/20 bg-[#14110e] p-4 shadow-aureate sm:p-5;
+  }
+
+  .side-panel {
+    @apply border border-brass/20 bg-[#15120f] p-4 shadow-aureate;
+  }
+
+  .kicker {
+    @apply text-xs uppercase tracking-[0.22em] text-brass;
+  }
+
+  .quiet-card {
+    @apply border border-white/10 bg-white/[0.035] p-4;
+  }
+}
+
+.luxury-grid {
+  background-image:
+    linear-gradient(rgba(241, 226, 191, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(241, 226, 191, 0.12) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: radial-gradient(circle at center, black, transparent 72%);
+}
+
+.stable-scene {
+  background:
+    radial-gradient(circle at center, rgba(216, 179, 106, 0.08), transparent 62%),
+    #070706;
+  cursor: crosshair;
+  min-height: min(68vh, 620px);
+}
+
+.stable-darkness {
+  background:
+    radial-gradient(circle at var(--lx) var(--ly), transparent 0 116px, rgba(0, 0, 0, 0.28) 172px, rgba(0, 0, 0, 0.72) 310px),
+    linear-gradient(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.22));
+}
+
+.stable-beam {
+  background: radial-gradient(circle at var(--lx) var(--ly), rgba(241, 226, 191, 0.34), transparent 158px);
+  mix-blend-mode: screen;
+}
+
+.document-board {
+  background-image:
+    linear-gradient(90deg, rgba(216, 179, 106, 0.08) 1px, transparent 1px),
+    linear-gradient(rgba(216, 179, 106, 0.08) 1px, transparent 1px);
+  background-size: 33.333% 33.333%;
+}
+
+.ticket-piece {
+  border-radius: 2px;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(87, 58, 27, 0.12) 0 2px, transparent 3px),
+    radial-gradient(circle at 74% 62%, rgba(87, 58, 27, 0.10) 0 1px, transparent 3px),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.55), transparent 35%),
+    linear-gradient(180deg, #e5d5ad 0%, #c7ad73 100%);
+  box-shadow: inset 0 0 0 1px rgba(62, 40, 20, 0.25), 0 14px 28px rgba(0, 0, 0, 0.24);
+  transform-origin: center;
+}
+
+.ticket-piece-decoy {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.65), transparent 36%),
+    linear-gradient(180deg, #d8d0bf 0%, #aaa08d 100%);
+  filter: saturate(0.55);
+}
+
+.ticket-piece::before,
+.ticket-piece::after {
+  content: '';
+  position: absolute;
+  background: rgba(80, 53, 28, 0.18);
+}
+
+.ticket-piece::before {
+  width: 52%;
+  height: 1px;
+  left: 12%;
+  top: 32%;
+}
+
+.ticket-piece::after {
+  width: 1px;
+  height: 54%;
+  right: 31%;
+  bottom: 12%;
+}
+
+.ticket-piece-decoy::before {
+  background: rgba(80, 53, 28, 0.08);
+}
+
+.ticket-piece-decoy::after {
+  display: none;
+}
+
+.terminal-window {
+  background-image:
+    linear-gradient(rgba(216, 179, 106, 0.08) 1px, transparent 1px),
+    radial-gradient(circle at top left, rgba(216, 179, 106, 0.18), transparent 42%),
+    linear-gradient(135deg, rgba(28, 68, 45, 0.45), rgba(63, 45, 24, 0.55));
+  background-size: 100% 28px, auto;
+}
+
+.terminal-stage {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(216, 179, 106, 0.18), transparent 34%),
+    radial-gradient(circle at 82% 18%, rgba(22, 58, 50, 0.35), transparent 36%),
+    linear-gradient(135deg, #20170f 0%, #17251c 52%, #2b2014 100%);
+}
+
+@media (max-width: 640px) {
+  .stable-scene {
+    min-height: 460px;
+  }
+
+  .ticket-piece {
+    min-height: 82px;
+    padding: 0.625rem;
+  }
+}
+
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  .boarding-pass,
+  .boarding-pass * {
+    visibility: visible !important;
+  }
+
+  .boarding-pass {
+    position: static !important;
+    inset: auto !important;
+    width: 100% !important;
+    transform: none !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  @page {
+    margin: 16mm;
+  }
+}
